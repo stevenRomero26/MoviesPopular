@@ -1,9 +1,8 @@
 //TMDB 
 
-const API_KEY = 'api_key=1cf50e6248dc270629e802686245c2c8&lenguage=es-MX';
+const API_KEY = 'api_key=0c9ee92551901df04e8caeabc8d11445&language=es-MX';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const API_URL = BASE_URL + '/discover/movie?sort_by=popularity.desc&'+API_KEY;
-const ApiActores= BASE_URL+'person/550?'+API_KEY;
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 const searchURL = BASE_URL + '/search/movie?'+API_KEY;
 
@@ -68,10 +67,12 @@ const genres = [
       "id": 878,
       "name": "Science Fiction"
     },
+
     {
       "id": 10770,
       "name": "TV Movie"
     },
+
     {
       "id": 53,
       "name": "Thriller"
@@ -85,8 +86,9 @@ const genres = [
       "name": "Western"
     }
   ]
-
-const main = document.getElementById('main');
+alert();
+const contenido = document.getElementById('containerr');
+const conten = document.getElementById('');
 const form =  document.getElementById('form');
 const search = document.getElementById('search');
 const tagsEl = document.getElementById('tags');
@@ -101,7 +103,7 @@ var prevPage = 3;
 var lastUrl = '';
 var totalPages = 100;
 
-var selectedGenre = []
+var selecGenero = []
 setGenre();
 function setGenre() {
     tagsEl.innerHTML= '';
@@ -111,35 +113,35 @@ function setGenre() {
         t.id=genre.id;
         t.innerText = genre.name;
         t.addEventListener('click', () => {
-            if(selectedGenre.length == 0){
-                selectedGenre.push(genre.id);
+            if(selecGenero.length == 0){
+                selecGenero.push(genre.id);
             }else{
-                if(selectedGenre.includes(genre.id)){
-                    selectedGenre.forEach((id, idx) => {
+                if(selecGenero.includes(genre.id)){
+                    selecGenero.forEach((id, idx) => {
                         if(id == genre.id){
-                            selectedGenre.splice(idx, 1);
+                            selecGenero.splice(idx, 1);
                         }
                     })
                 }else{
-                    selectedGenre.push(genre.id);
+                    selecGenero.push(genre.id);
                 }
             }
-            console.log(selectedGenre)
-            getMovies(API_URL + '&with_genres='+encodeURI(selectedGenre.join(',')))
-            highlightSelection()
+            console.log(selecGenero)
+            getPeliculas(API_URL + '&with_genres='+encodeURI(selecGenero.join(',')))
+            ResaltarSelección()
         })
         tagsEl.append(t);
     })
 }
 
-function highlightSelection() {
+function ResaltarSelección() {
     const tags = document.querySelectorAll('.tag');
     tags.forEach(tag => {
         tag.classList.remove('highlight')
     })
     clearBtn()
-    if(selectedGenre.length !=0){   
-        selectedGenre.forEach(id => {
+    if(selecGenero.length !=0){   
+        selecGenero.forEach(id => {
             const hightlightedTag = document.getElementById(id);
             hightlightedTag.classList.add('highlight');
         })
@@ -158,18 +160,18 @@ function clearBtn(){
         clear.id = 'clear';
         clear.innerText = 'Clear x';
         clear.addEventListener('click', () => {
-            selectedGenre = [];
+            selecGenero = [];
             setGenre();            
-            getMovies(API_URL,ApiActores);
+            getPeliculas(API_URL);
         })
         tagsEl.append(clear);
     }
     
 }
 
-getMovies(API_URL,ApiActores);
+getPeliculas(API_URL);
 
-function getMovies(url) {
+function getPeliculas(url) {
   lastUrl = url;
     fetch(url).then(res => res.json()).then(data => {
         console.log(data.results)
@@ -204,14 +206,43 @@ function getMovies(url) {
 }
 
 
-function showMovies(data) {
-    main.innerHTML = '';
+peliculasPopulares = async () =>{
+  peliculas= '';
+  try {
+    const respusta = await fetch('https://api.themoviedb.org/3/movie/popular?api_key=0c9ee92551901df04e8caeabc8d11445');
+    const datos= await respusta.json();
+    let peliculas= '';
+    datos.results.forEach(pelicula => {
+      peliculas+= `
+      <div>peliculas</div>
+      <p>${pelicula.title}</p>
+      <p>${pelicula.title}</p>
+      <img class="poster" src="https://image.tmdb.org/t/p/w500/${pelicula.poster_path}">
 
+      `;
+   
+    });
+    document.getElementById('media').innerHTML=peliculas;
+    let peliculass = document.getElementById('peliculas');
+    peliculass.addEventListener("click",()=>{
+      peliculasPopulares();
+    });
+
+
+  } catch (error) {
+    
+  }
+}
+
+const datos = await respuesta.json();
+		
+peliculassss()
+function showMovies(data) {
+    contenido.innerHTML = '';
     data.forEach(movie => {
-        const {title, poster_path,name, vote_average, overview, id} = movie;
+        const {title, poster_path, vote_average, overview, id} = movie;
         const movieEl = document.createElement('div');
         movieEl.classList.add('movie');
-       const ApiActoress= BASE_URL+`person/${id}?`+API_KEY;
         movieEl.innerHTML = `
              <img src="${poster_path? IMG_URL+poster_path: "http://via.placeholder.com/1080x1580" }" alt="${title}">
 
@@ -219,31 +250,29 @@ function showMovies(data) {
                 <h3>${title}</h3>
                 <span class="${getColor(vote_average)}">${vote_average}</span>
             </div>
-             
+
             <div class="overview">
-                
+
                 <h3>Descripcion</h3>
-                <h4>${title}</h4>
                 ${overview}
-                ${name}
                 <br/> 
                 <button class="know-more" id="${id}">Know More</button
             </div>
         
         `
 
-        main.appendChild(movieEl);
+        contenido.appendChild(movieEl);
 
         document.getElementById(id).addEventListener('click', () => {
           console.log(id)
-          openNav(movie)
+          abrirNav(movie)
         })
     })
 }
 
 const overlayContent = document.getElementById('overlay-content');
 /* Open when someone clicks on the span element */
-function openNav(movie) {
+function abrirNav(movie) {
   let id = movie.id;
   fetch(BASE_URL + '/movie/'+id+'/videos?'+API_KEY).then(res => res.json()).then(videoData => {
     console.log(videoData);
@@ -358,12 +387,12 @@ form.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const searchTerm = search.value;
-    selectedGenre=[];
+    selecGenero=[];
     setGenre();
     if(searchTerm) {
-        getMovies(searchURL+'&query='+searchTerm)
+        getPeliculas(searchURL+'&query='+searchTerm)
     }else{
-        getMovies(API_URL,ApiActores);
+        getPeliculas(API_URL);
     }
 
 })
@@ -386,53 +415,13 @@ function pageCall(page){
   let key = queryParams[queryParams.length -1].split('=');
   if(key[0] != 'page'){
     let url = lastUrl + '&page='+page
-    getMovies(url);
+    getPeliculas(url);
   }else{
     key[1] = page.toString();
     let a = key.join('=');
     queryParams[queryParams.length -1] = a;
     let b = queryParams.join('&');
     let url = urlSplit[0] +'?'+ b
-    getMovies(url);
+    getPeliculas(url);
   }
 }
-
-// function actor(id, name, profile_path, known_for, creditsAll){
-//    this.id=id;
-//    this.name=name;
-//    this.profile_path=profile_path;
-//    this.known_for=known_for;
-//    this.creditsAll=creditsAll;
-// }
-// function GetActor(actorName){
-//   let theMovieDBApiKey=0;
-//   return fetch(`https://api.themoviedb.org/3/search/person?api_key=${theMovieDBApiKey}&language=en-US&query=${actorName}&page=1&include_adult=false`)
-//   .then(function(res){
-//     return res.json();
-//   })
-//   .then(function(data){
-//     return data.results[0];
-//   })
-//   .then(function(actorDb){
-//     var sactorderr=actorDb;
-//     console.log(sactorderr.id)
-//     return  fetch(`https://api.themoviedb.org/3/person//${sactorderr.id}
-//     /combined_credits?api_key=${theMovieDBApiKey}&language=en-US`)
-//     .then(function(res){
-//       return res.json();
-//     })
-//     .then(function(data){
-//       return data.cast ;
-//     })
-//     .then(function(credito){
-//       var actorCreditos = credito;
-//      return Promise.all([sactorderr,actorCreditos]);
-//     })
-//     .then(function(valuues){
-//       var actorDetaliObj = valuues[0];
-//       var actorcredd = valuues[1];
-//       return new actor(actorDetaliObj.id, actorDetaliObj.name) 
-//     })
-//   })
-// }
-// GetActor();

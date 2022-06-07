@@ -1,17 +1,22 @@
-*{
-    margin: 0%;
-    padding: 0% ;
+#containerr{
+    display: flex;
+    background-color: rgb(182, 183, 184);
+    
 }
-body{
-   background-image: url(https://www.wallpaperup.com/uploads/wallpapers/2021/03/16/1403980/df4d083832f39af38dce18d494c6f945-700.jpg);
-   background-repeat: no-repeat;
-   background-size: cover;
-   background-position: center;
-   display: flex;
-   text-align: center;
-  }
-  .container-from {
-      justify-content: space-between;
-      display: flex;
-      width: 90%;
-  }
+.texto{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: rgb(255, 255, 255);
+    margin: 0px  30px;
+    display: flex;
+    
+    flex-direction: column;
+}
+.texto_titulo{
+    font-size: 22px;
+    color: rgb(9, 88, 88);
+}
+.actores{
+    display: flex;
+    margin: 0px 0px;
+    color: rgb(0, 0, 0);
+}
